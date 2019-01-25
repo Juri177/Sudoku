@@ -90,17 +90,25 @@ public class SudokuFX {
         return true;
     }
 
-    public boolean squareValidity(int xKoordinate, int yKoordinate, int neueZahl) {
+    /*public boolean squareValidity(int xKoordinate, int yKoordinate, int neueZahl) {
         //Schleife, die Zeilen durchgeht
         for (int i = 0; i < 3; i++) {
             //Schleife, die Spalten durchgeht
             for (int i = 0; i < 3; i++) {
-                if (grid[][])
+                if (grid[
+                        xKoordinate/=3
+                        ][])
             }
         }
-    }
+    }*/
 
-    public int
+    public int planquadratFinden(int koordinate){
+        int zahl01 = koordinate;
+        zahl01/=3;
+        System.out.println(zahl01);
+        zahl01*=3;
+        return zahl01;
+    }
 
 
 }
