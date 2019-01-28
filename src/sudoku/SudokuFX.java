@@ -31,10 +31,10 @@ public class SudokuFX {
         int rechts = koodrdinateAbfragen("rechts");
         int neueZahl = readNumber("Neue Zahl:");
 
-        if (checkValidity(oben, rechts, neueZahl) == false){
+        if (checkValidity(oben, rechts, neueZahl) == false) {
             System.out.println("Fehler, do passt die Zahl net hi");
             nummerÄndern();
-        }else {
+        } else {
             grid[rechts][oben] = neueZahl;
             displayGrid();
             System.out.println(neueZahl + " an oben=" + oben + ", rechts=" + rechts + " eingefügt");
@@ -47,17 +47,22 @@ public class SudokuFX {
     }
 
 
+    public int[][] getGrid() {
+        return grid;
+    }
+
+
     public void displayGrid() {
 
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[i].length; j++) {
                 System.out.print(grid[j][i] + " ");
-                if (j%3 == 2){
+                if (j % 3 == 2) {
                     System.out.print("|");
                 }
             }
             System.out.println("");
-            if (i%3 == 2){
+            if (i % 3 == 2) {
                 System.out.println("- - - - - - - - - - -");
             }
         }
@@ -80,24 +85,14 @@ public class SudokuFX {
     }
 
 
-
     //Validity checks; gibt false zurück falls die Zahl NICHT passt
 
-    public boolean checkValidity(int oben, int rechts, int neueZahl){
-            if (rowValidity(oben, neueZahl)  == false){
-                return false;
-            }
-
-            if (columnValidity(rechts, neueZahl) == false){
-                return false;
-            }
-
-            if (squareValidity(oben, rechts, neueZahl) == false){
-                return false;
-            }
-
-            return true;
+    public boolean checkValidity(int oben, int rechts, int neueZahl) {
+        if (!rowValidity(oben, neueZahl) || !columnValidity(rechts, neueZahl) || !squareValidity(oben, rechts, neueZahl)) {
+            return false;
         }
+        return true;
+    }
 
 
     public boolean rowValidity(int oben, int neueZahl) {
@@ -119,16 +114,16 @@ public class SudokuFX {
     }
 
     public boolean squareValidity(int oben, int rechts, int neueZahl) {
-        int x = oben/3;
+        int x = oben / 3;
         x = x * 3;
-        int y = rechts/3;
+        int y = rechts / 3;
         y = y * 3;
 
         //Schleife, die Zeilen durchgeht
         for (int i = 0; i < 3; i++) {
             //Schleife, die Spalten durchgeht
             for (int j = 0; j < 3; j++) {
-                if (grid [y+i] [x+j] == neueZahl){
+                if (grid[y + i][x + j] == neueZahl) {
                     return false;
                 }
             }
@@ -137,7 +132,7 @@ public class SudokuFX {
     }
 
 
-    public void makeMeAGrid(){
+    public void makeMeAGrid() {
         nummerManuellÄndern(0, 0, 8);
         nummerManuellÄndern(1, 0, 7);
         nummerManuellÄndern(4, 0, 2);
@@ -183,6 +178,17 @@ public class SudokuFX {
         nummerManuellÄndern(6, 8, 6);
 
         displayGrid();
+    }
+
+    public boolean isSolved() {
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; i < grid[i].length; i++) {
+                if (!checkValidity(j, i, grid[j][i]) || grid[j][i] == 0) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
 }

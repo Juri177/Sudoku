@@ -5,9 +5,11 @@ import java.util.Scanner;
 public class main {
     public static void main(String[] args) {
         SudokuFX sudokuFX = new SudokuFX();
-        sudokuFX.makeMeAGrid();
+        SudokuSolver sudokuSolver = new SudokuSolver(sudokuFX);
 
-        sudokuFX.nummerÄndern();
+        sudokuFX.displayGrid();
+
+        System.out.println(sudokuFX.isSolved());
 
     }
 }
