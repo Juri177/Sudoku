@@ -5,14 +5,9 @@ import java.util.Scanner;
 public class main {
     public static void main(String[] args) {
         SudokuFX sudokuFX = new SudokuFX();
+        sudokuFX.makeMeAGrid();
 
+        sudokuFX.nummerÄndern();
 
-        int zahl01 = 4;
-
-        sudokuFX.planquadratFinden(zahl01);
-
-        System.out.println(zahl01);
     }
-
-
 }
