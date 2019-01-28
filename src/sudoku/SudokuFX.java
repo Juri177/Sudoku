@@ -27,23 +27,23 @@ public class SudokuFX {
 
     public void nummerÄndern() {
 
-        int oben = koodrdinateAbfragen("oben");
-        int rechts = koodrdinateAbfragen("rechts");
+        int row = koodrdinateAbfragen("row");
+        int column = koodrdinateAbfragen("column");
         int neueZahl = readNumber("Neue Zahl:");
 
-        if (checkValidity(oben, rechts, neueZahl) == false) {
+        if (checkValidity(row, column, neueZahl) == false) {
             System.out.println("Fehler, do passt die Zahl net hi");
             nummerÄndern();
         } else {
-            grid[rechts][oben] = neueZahl;
+            grid[row][column] = neueZahl;
             displayGrid();
-            System.out.println(neueZahl + " an oben=" + oben + ", rechts=" + rechts + " eingefügt");
+            System.out.println(neueZahl + " an oben=" + row + ", rechts=" + column + " eingefügt");
         }
     }
 
 
-    public void nummerManuellÄndern(int oben, int rechts, int neueZahl) {
-        grid[oben][rechts] = neueZahl;
+    public void nummerManuellÄndern(int row, int column, int neueZahl) {
+        grid[row][column] = neueZahl;
     }
 
 
@@ -54,15 +54,15 @@ public class SudokuFX {
 
     public void displayGrid() {
 
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; j < grid[i].length; j++) {
-                System.out.print(grid[j][i] + " ");
-                if (j % 3 == 2) {
+        for (int row = 0; row < grid.length; row++) {
+            for (int column = 0; column < grid[row].length; column++) {
+                System.out.print(grid[column][row] + " ");
+                if (column % 3 == 2) {
                     System.out.print("|");
                 }
             }
             System.out.println("");
-            if (i % 3 == 2) {
+            if (row % 3 == 2) {
                 System.out.println("- - - - - - - - - - -");
             }
         }
@@ -80,43 +80,43 @@ public class SudokuFX {
 
     public int koodrdinateAbfragen(String Achse) {
 
-        int zahl01 = readNumber(Achse + "-Koordinate:");
+        int zahl01 = readNumber(Achse + "-Coordinate:");
         return zahl01;
     }
 
 
     //Validity checks; gibt false zurück falls die Zahl NICHT passt
 
-    public boolean checkValidity(int oben, int rechts, int neueZahl) {
-        if (!rowValidity(oben, neueZahl) || !columnValidity(rechts, neueZahl) || !squareValidity(oben, rechts, neueZahl)) {
+    public boolean checkValidity(int row, int column, int neueZahl) {
+        if (!rowValidity(row, neueZahl) || !columnValidity(column, neueZahl) || !squareValidity(row, column, neueZahl)) {
             return false;
         }
         return true;
     }
 
 
-    public boolean rowValidity(int oben, int neueZahl) {
+    public boolean rowValidity(int row, int neueZahl) {
         for (int i = 0; i < 9; i++) {
-            if (grid[oben][i] == neueZahl) {
+            if (grid[row][i] == neueZahl) {
                 return false;
             }
         }
         return true;
     }
 
-    public boolean columnValidity(int rechts, int neueZahl) {
+    public boolean columnValidity(int column, int neueZahl) {
         for (int i = 0; i < 9; i++) {
-            if (grid[i][rechts] == neueZahl) {
+            if (grid[i][column] == neueZahl) {
                 return false;
             }
         }
         return true;
     }
 
-    public boolean squareValidity(int oben, int rechts, int neueZahl) {
-        int x = oben / 3;
+    public boolean squareValidity(int row, int column, int neueZahl) {
+        int x = row / 3;
         x = x * 3;
-        int y = rechts / 3;
+        int y = column / 3;
         y = y * 3;
 
         //Schleife, die Zeilen durchgeht
@@ -181,10 +181,28 @@ public class SudokuFX {
     }
 
     public boolean isSolved() {
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; i < grid[i].length; i++) {
-                if (!checkValidity(j, i, grid[j][i]) || grid[j][i] == 0) {
+        for (int row = 0; row < grid.length; row++) {
+            for (int column = 0; column < grid[row].length; column++) {
+                if (!checkValidity(column, row, grid[row][column]) || grid[row][column] == 0) {
                     return false;
+                }
+            }
+        }
+        return true;
+    }
+
+
+    public boolean solve() {
+        for (int row = 0; row < grid.length; row++) {
+            for (int column = 0; column < grid[row].length; column++) {
+                if (grid[row][column] == 0) {
+                    for (int i = 1; i <= 9; i++) {
+                        if (checkValidity(column, row, i)) {
+                            grid[row][column] = i;
+                        }else {
+                            grid[row][column] = 0;
+                        }
+                    }
                 }
             }
         }
