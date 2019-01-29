@@ -7,13 +7,12 @@ public class main {
         SudokuFX sudokuFX = new SudokuFX();
 
 
-        //sudokuFX.makeMeAGrid();
-
-        System.out.println(sudokuFX.isSolved());
-
-        System.out.println(sudokuFX.solve());
+        sudokuFX.solve();
 
         sudokuFX.displayGrid();
+
+
+
 
     }
 }
