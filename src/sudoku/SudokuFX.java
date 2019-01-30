@@ -1,5 +1,6 @@
 package sudoku;
 
+import java.util.Random;
 import java.util.Scanner;
 
 public class SudokuFX {
@@ -11,33 +12,124 @@ public class SudokuFX {
         grid = new int[9][9];
     }
 
-    public SudokuFX(int number){
 
+    //Füllt das Sudoku aus, printed das gefüllte grid
+    public boolean solve() {
+        for (int row = 0; row < grid.length; row++) {
+            for (int column = 0; column < grid[row].length; column++) {
+                if (grid[column][row] == 0) {
+                    //System.out.println("Gefundenes leeres Kästchen: Spalte " + column + " Reihe " + row);
+                    //Alle Zahlen von 1-9 ausprobieren
+                    for (int i = 1; i <= 9; i++) {
+                        //System.out.println(i);
+                        //Wenns passt, einsetzten
+                        if (checkValidity(column, row, i)) {
+                            grid[column][row] = i;
+                            //System.out.println("Eingesetzt: " + i);
+                            if (solve()) {
+                                return true;
+                            } else {
+                                grid[column][row] = 0;
+                                //System.out.println("Reihe " + row + " Spalte " + column + " auf 0 gesetzt");
+                            }
+                        }
+                    }
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public boolean solveMitZeitmessung() {
+        final long timeStart = System.currentTimeMillis();
+        for (int row = 0; row < grid.length; row++) {
+            for (int column = 0; column < grid[row].length; column++) {
+                if (grid[column][row] == 0) {
+                    //System.out.println("Gefundenes leeres Kästchen: Spalte " + column + " Reihe " + row);
+                    //Alle Zahlen von 1-9 ausprobieren
+                    for (int i = 1; i <= 9; i++) {
+                        //System.out.println(i);
+                        //Wenns passt, einsetzten
+                        if (checkValidity(column, row, i)) {
+                            grid[column][row] = i;
+                            //System.out.println("Eingesetzt: " + i);
+                            if (solve()) {
+                                return true;
+                            } else {
+                                grid[column][row] = 0;
+                                //System.out.println("Reihe " + row + " Spalte " + column + " auf 0 gesetzt");
+                            }
+                        }
+                    }
+                    return false;
+                }
+            }
+        }
+        final long timeEnd = System.currentTimeMillis();
+        System.out.println("Zeit zur Lösung: " + (timeEnd - timeStart) + " Millisec.");
+        return true;
     }
 
 
-    public void nummerÄndern() {
+    //Erstellt ein lösbares Sudoku
+    public void erstellen(int seed, int schwierigkeit) {
+        Random random = new Random(seed);
+        for (int i = 0; i < 10; i++) {
+            nummerManuellÄndern(random.nextInt(9), random.nextInt(9), random.nextInt(9));
+        }
+        solve();
+        zerpflücker(seed, schwierigkeit);
+        displayGrid();
+    }
 
-        int row = koodrdinateAbfragen("row");
-        int column = koodrdinateAbfragen("column");
-        int neueZahl = readNumber("Neue Zahl:");
 
-        if (checkValidity(row, column, neueZahl) == false) {
-            System.out.println("Fehler, do passt die Zahl net hi");
-            nummerÄndern();
-        } else {
-            grid[column][row] = neueZahl;
-            displayGrid();
-            System.out.println(neueZahl + " an oben=" + row + ", rechts=" + column + " eingefügt");
+    //Entfernt x zufällige Zahlen aus dem grid
+    public void zerpflücker(int number, int schwierigkeit) {
+        long seed = number;
+        Random random = new Random(seed);
+
+        for (int i = 0; i < schwierigkeit; i++) {
+            int column = random.nextInt(9);
+            int row = random.nextInt(9);
+            if (grid[column][row] != 0) {
+                nummerManuellÄndern(column, row, 0);
+            } else {
+                column = random.nextInt(9);
+                row = random.nextInt(9);
+                nummerManuellÄndern(column, row, 0);
+            }
         }
     }
 
 
+    //Gibt dem Nutzer anfragen, um eine Zahl im grid zu ändern
+    public void nummerÄndernBenutzerfreundlich() {
+        System.out.println("Zahleingabe: ");
+        int row = koodrdinateAbfragen("row");
+        int column = koodrdinateAbfragen("column");
+        int neueZahl = readNumber("Neue Zahl:");
+
+
+        if (checkValidity(column, row, neueZahl) == false) {
+            System.out.println("Computer sagt nein");
+            System.out.println("Fehler, do passt die Zahl net hi");
+            nummerÄndernBenutzerfreundlich();
+        } else {
+            grid[column][row] = neueZahl;
+            displayGrid();
+            System.out.println(neueZahl + " an Reihe = " + row + ", Spalte = " + column + " eingefügt");
+        }
+    }
+
+
+    //Ändert Nummern im grid mit eingegeben Werten
     public void nummerManuellÄndern(int column, int row, int neueZahl) {
         grid[column][row] = neueZahl;
     }
 
 
+    //Stellt das grid dar
     public void displayGrid() {
 
         for (int row = 0; row < grid.length; row++) {
@@ -60,10 +152,10 @@ public class SudokuFX {
         Scanner eingabe = new Scanner(System.in);
         System.out.println(eingabeaufforderung);
         return eingabe.nextInt();
-
     }
 
 
+    //Fragt dem Nutzer eine Koordinate ab
     public int koodrdinateAbfragen(String Achse) {
 
         int zahl01 = readNumber(Achse + "-Coordinate:");
@@ -72,7 +164,6 @@ public class SudokuFX {
 
 
     //Validity checks; gibt false zurück falls die Zahl NICHT passt
-
     public boolean checkValidity(int column, int row, int neueZahl) {
         if (rowValidity(row, neueZahl) == false) {
             return false;
@@ -124,6 +215,7 @@ public class SudokuFX {
     }
 
 
+    //Erstellt vorgefertigte Sudoku-Felder
     public void makeMeAGrid() {
         nummerManuellÄndern(0, 0, 8);
         nummerManuellÄndern(1, 0, 7);
@@ -227,38 +319,19 @@ public class SudokuFX {
         displayGrid();
     }
 
+
+    //Kontrolliert, ob das Sudoku gelöst ist
     public boolean isSolved() {
-        for (int column = 0; column < grid.length; column++) {
-            for (int row = 0; row < grid[column].length; row++) {
-                if (!checkValidity(column, row, grid[column][row]) || grid[column][row] == 0) {
+        /*Die Methode prüft nur, ob es keine freien Stellen mehr im Grid gibt
+         *Ob eine Zahl an ihren Platz passt wird beim einfügen überprüft, da man in checkValidity
+         *nicht die aktuell betrachtete Zahl ausschließen kann
+         */
+        for (int row = 0; row < 9; row++) {
+            for (int column = 0; column < 9; column++) {
+                /*if (checkValidity(column, row, grid[column][row]) == false) {
                     return false;
-                }
-            }
-        }
-        return true;
-    }
-
-
-    public boolean solve() {
-        for (int row = 0; row < grid.length; row++) {
-            for (int column = 0; column < grid[row].length; column++) {
+                }*/
                 if (grid[column][row] == 0) {
-                    //System.out.println("Gefundenes leeres Kästchen: Spalte " + column + " Reihe " + row);
-                    //Alle Zahlen von 1-9 ausprobieren
-                    for (int i = 1; i <= 9; i++) {
-                        //System.out.println(i);
-                        //Wenns passt, einsetzten
-                        if (checkValidity(column, row, i)) {
-                            grid[column][row] = i;
-                            //System.out.println("Eingesetzt: " + i);
-                            if (solve()) {
-                                return true;
-                            } else {
-                                grid[column][row] = 0;
-                                //System.out.println("Reihe " + row + " Spalte " + column + " auf 0 gesetzt");
-                            }
-                        }
-                    }
                     return false;
                 }
             }
@@ -266,17 +339,21 @@ public class SudokuFX {
         return true;
     }
 
+
+    //Stellt benutzerfreundliche Bedienung zur verfügung
+    public void benutzerBedienung() {
+        erstellen(
+                readNumber("Grützi. Geben Sie eine beliebige Zahl ein um zu beginnen."),
+                readNumber("Bitte legen sie Ihre Schwierigkeit fest: " +
+                        "10 für einfach, 20 für mittel und 30 für schwer")
+        );
+
+        while (!isSolved()) {
+            nummerÄndernBenutzerfreundlich();
+        }
+
+        System.out.println("Glückwunsch, das Sudoku ist gelöst");
+        System.out.println("Vielen Dank, dass Sie sich für DB Sudoku entschieden haben, " +
+                "wir hoffen sie bald wieder bei uns begrüßen zu können");
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
